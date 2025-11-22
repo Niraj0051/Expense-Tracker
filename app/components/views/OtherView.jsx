@@ -68,20 +68,20 @@ const OtherView = () => {
 
             <form onSubmit={handleAddOther} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <h3 className="font-semibold text-slate-700 mb-3">Add New Expense</h3>
-                <div className="flex gap-3 mb-3">
+                <div className="flex flex-col gap-3 mb-3">
                     <input
                         type="number"
                         value={amount}
                         onChange={e => setAmount(e.target.value)}
-                        placeholder="₹0"
-                        className="w-24 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                        placeholder="Amount (₹)"
+                        className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                     />
                     <input
                         type="text"
                         value={note}
                         onChange={e => setNote(e.target.value)}
-                        placeholder="Note"
-                        className="flex-1 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                        placeholder="Note (optional)"
+                        className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                     />
                 </div>
                 <button type="submit" className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2">

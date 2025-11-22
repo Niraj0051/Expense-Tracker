@@ -58,43 +58,78 @@ export const ExpenseProvider = ({ children }) => {
     setExpenses(prev => [newExpense, ...prev]);
 
     try {
-      await fetch('/api/expenses', {
+      const response = await fetch('/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newExpense)
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save expense');
+      }
+
+      console.log('Expense saved successfully');
     } catch (error) {
       console.error('Failed to add expense:', error);
-      // Revert on failure (optional, but good practice)
+      // Revert on failure
       setExpenses(prev => prev.filter(e => e.id !== newExpense.id));
+      // Alert user about the failure
+      alert(`Failed to save expense: ${error.message}. Please check your connection and try again.`);
     }
   };
 
   const removeExpense = async (id) => {
+    // Store the expense in case we need to restore it
+    const expenseToDelete = expenses.find(e => e.id === id);
+
     // Optimistic update
     setExpenses(prev => prev.filter(e => e.id !== id));
 
     try {
-      await fetch(`/api/expenses/${id}`, {
+      const response = await fetch(`/api/expenses/${id}`, {
         method: 'DELETE'
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete expense');
+      }
+
+      console.log('Expense deleted successfully');
     } catch (error) {
       console.error('Failed to delete expense:', error);
+      // Restore on failure
+      if (expenseToDelete) {
+        setExpenses(prev => [expenseToDelete, ...prev]);
+      }
+      alert(`Failed to delete expense: ${error.message}. Please check your connection and try again.`);
     }
   };
 
   const updateTiffinSettings = async (settings) => {
+    const oldSettings = tiffinSettings;
     const newSettings = { ...tiffinSettings, ...settings };
     setTiffinSettings(newSettings);
 
     try {
-      await fetch('/api/settings', {
+      const response = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSettings)
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save settings');
+      }
+
+      console.log('Settings saved successfully');
     } catch (error) {
       console.error('Failed to update settings:', error);
+      // Revert on failure
+      setTiffinSettings(oldSettings);
+      alert(`Failed to save settings: ${error.message}. Please check your connection and try again.`);
     }
   };
 

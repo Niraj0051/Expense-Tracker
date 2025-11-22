@@ -26,6 +26,10 @@ const ExpenseSummary = () => {
         .filter(e => e.category === 'Meals' && e.type === 'tiffin')
         .length;
 
+    const tiffinTotal = monthlyExpenses
+        .filter(e => e.category === 'Meals' && e.type === 'tiffin')
+        .reduce((sum, e) => sum + e.amount, 0);
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Card */}
@@ -55,17 +59,26 @@ const ExpenseSummary = () => {
                 <div className="text-2xl font-bold text-slate-800">₹{rentTotal}</div>
             </div>
 
-            {/* Meals Card */}
+            {/* Meals Card - Two Columns */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 relative overflow-hidden group hover:border-orange-200 transition-colors">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l-2xl"></div>
-                <div className="flex items-center gap-2 text-orange-600 mb-2">
+                <div className="flex items-center gap-2 text-orange-600 mb-3">
                     <div className="bg-orange-50 p-1.5 rounded-lg group-hover:bg-orange-100 transition-colors">
                         <Utensils size={18} />
                     </div>
                     <span className="font-semibold text-sm">Meals</span>
                 </div>
-                <div className="text-2xl font-bold text-slate-800">₹{mealsTotal}</div>
-                <div className="text-xs text-slate-500 mt-1 font-medium">{tiffinCount} Tiffins</div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <div className="text-xs text-slate-500 mb-1 font-medium">Total</div>
+                        <div className="text-2xl font-bold text-slate-800">₹{mealsTotal}</div>
+                    </div>
+                    <div>
+                        <div className="text-xs text-slate-500 mb-1 font-medium">Tiffins</div>
+                        <div className="text-2xl font-bold text-orange-600">₹{tiffinTotal}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{tiffinCount} count</div>
+                    </div>
+                </div>
             </div>
 
             {/* Others Card */}

@@ -8,8 +8,10 @@ import { Utensils, Trash2 } from 'lucide-react';
 import ConfirmationModal from '../ConfirmationModal';
 
 const MealView = () => {
-    const { selectedDate, expenses, removeExpense } = useExpense();
+    const { selectedDate, expenses, addExpense, removeExpense } = useExpense();
     const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, expense: null });
+    const [amount, setAmount] = useState('');
+    const [note, setNote] = useState('');
 
     const dateKey = selectedDate.toDateString();
     const mealExpenses = expenses
@@ -28,6 +30,26 @@ const MealView = () => {
             removeExpense(deleteConfirm.expense.id);
         }
         setDeleteConfirm({ isOpen: false, expense: null });
+    };
+
+    const handleAddMeal = (e) => {
+        e.preventDefault();
+        if (!amount) return;
+
+        // Create a date object with the selected date but current time
+        const now = new Date();
+        const expenseDate = new Date(selectedDate);
+        expenseDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+        addExpense({
+            date: expenseDate.toISOString(),
+            category: 'Meals',
+            type: 'manual',
+            amount: Number(amount),
+            note: note || 'Meal'
+        });
+        setAmount('');
+        setNote('');
     };
 
     return (
@@ -55,10 +77,15 @@ const MealView = () => {
                             const dateObj = new Date(expense.date);
                             return (
                                 <div key={expense.id} className="flex justify-between items-center p-3 bg-white border border-slate-100 rounded-xl shadow-sm">
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-slate-800 text-lg">
-                                            {format(dateObj, 'd MMM')}
-                                        </span>
+                                    <div className="flex flex-col flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-slate-800 text-lg">
+                                                {expense.note || 'Meal'}
+                                            </span>
+                                            {expense.type === 'tiffin' && (
+                                                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">Tiffin</span>
+                                            )}
+                                        </div>
                                         <span className="text-xs font-medium text-slate-400">
                                             {format(dateObj, 'h:mm a')}
                                         </span>
@@ -78,6 +105,33 @@ const MealView = () => {
                     </div>
                 )}
             </div>
+
+            {/* Manual Meal Entry Form */}
+            <form onSubmit={handleAddMeal} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                    <Utensils size={18} />
+                    Add Manual Meal
+                </h3>
+                <div className="flex flex-col gap-3 mb-3">
+                    <input
+                        type="number"
+                        value={amount}
+                        onChange={e => setAmount(e.target.value)}
+                        placeholder="Amount (₹)"
+                        className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                    />
+                    <input
+                        type="text"
+                        value={note}
+                        onChange={e => setNote(e.target.value)}
+                        placeholder="Note (e.g., Lunch, Dinner, Snacks)"
+                        className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                    />
+                </div>
+                <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-xl shadow-lg shadow-orange-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                    <Utensils size={20} /> Add Meal
+                </button>
+            </form>
 
             <ConfirmationModal
                 isOpen={deleteConfirm.isOpen}
