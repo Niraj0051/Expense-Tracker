@@ -100,7 +100,16 @@ app.post('/api/settings', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Export for Vercel
+module.exports = app;
+
+// Only listen if running locally (not imported as a module)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    initDb();
+  });
+} else {
+  // Initialize DB for serverless environment (optional, might need optimization)
   initDb();
-});
+}

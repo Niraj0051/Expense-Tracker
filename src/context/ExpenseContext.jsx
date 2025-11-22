@@ -17,8 +17,8 @@ export const ExpenseProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         const [expensesRes, settingsRes] = await Promise.all([
-          fetch('http://localhost:5000/api/expenses'),
-          fetch('http://localhost:5000/api/settings')
+          fetch('/api/expenses'),
+          fetch('/api/settings')
         ]);
 
         const expensesData = await expensesRes.json();
@@ -56,7 +56,7 @@ export const ExpenseProvider = ({ children }) => {
     setExpenses(prev => [newExpense, ...prev]);
 
     try {
-      await fetch('http://localhost:5000/api/expenses', {
+      await fetch('/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newExpense)
@@ -73,7 +73,7 @@ export const ExpenseProvider = ({ children }) => {
     setExpenses(prev => prev.filter(e => e.id !== id));
 
     try {
-      await fetch(`http://localhost:5000/api/expenses/${id}`, {
+      await fetch(`/api/expenses/${id}`, {
         method: 'DELETE'
       });
     } catch (error) {
@@ -86,7 +86,7 @@ export const ExpenseProvider = ({ children }) => {
     setTiffinSettings(newSettings);
 
     try {
-      await fetch('http://localhost:5000/api/settings', {
+      await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSettings)
