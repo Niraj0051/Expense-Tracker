@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, format } from 'date-fns';
 

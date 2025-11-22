@@ -1,11 +1,15 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { useExpense } from '../../context/ExpenseContext';
 import { format } from 'date-fns';
 import TiffinTracker from '../TiffinTracker';
-import { Utensils } from 'lucide-react';
+import { Utensils, Trash2 } from 'lucide-react';
+import ConfirmationModal from '../ConfirmationModal';
 
 const MealView = () => {
-    const { selectedDate, expenses } = useExpense();
+    const { selectedDate, expenses, removeExpense } = useExpense();
+    const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, expense: null });
 
     const dateKey = selectedDate.toDateString();
     const mealExpenses = expenses
@@ -14,6 +18,17 @@ const MealView = () => {
             e.category === 'Meals'
         )
         .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort descending
+
+    const handleDeleteClick = (expense) => {
+        setDeleteConfirm({ isOpen: true, expense });
+    };
+
+    const confirmDelete = () => {
+        if (deleteConfirm.expense) {
+            removeExpense(deleteConfirm.expense.id);
+        }
+        setDeleteConfirm({ isOpen: false, expense: null });
+    };
 
     return (
         <div className="space-y-6 p-4 pb-24">
@@ -48,13 +63,31 @@ const MealView = () => {
                                             {format(dateObj, 'h:mm a')}
                                         </span>
                                     </div>
-                                    <span className="font-bold text-slate-800 text-lg">₹{expense.amount}</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-bold text-slate-800 text-lg">₹{expense.amount}</span>
+                                        <button
+                                            onClick={() => handleDeleteClick(expense)}
+                                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
                                 </div>
                             );
                         })}
                     </div>
                 )}
             </div>
+
+            <ConfirmationModal
+                isOpen={deleteConfirm.isOpen}
+                onClose={() => setDeleteConfirm({ isOpen: false, expense: null })}
+                onConfirm={confirmDelete}
+                title="Delete Meal Entry?"
+                message={`Are you sure you want to delete this meal entry of ₹${deleteConfirm.expense?.amount || 0}?`}
+                confirmText="Delete"
+                confirmColor="bg-red-600 hover:bg-red-700 shadow-red-200"
+            />
         </div>
     );
 };
